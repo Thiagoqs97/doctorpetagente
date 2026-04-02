@@ -100,10 +100,10 @@ async function processarMidia(tipoWA, message, fullData) {
 
       case 'audioMessage': {
         const audioMsg = message.audioMessage || {};
-        const base64 = fullData?.media || audioMsg.base64 || '';
+        const base64 = fullData?.media || fullData?.message?.base64 || message?.base64 || audioMsg?.base64 || fullData?.base64 || '';
         if (!base64) {
-          console.warn('[MEDIA] Áudio sem base64 disponível');
-          return { tipo: 'audio', conteudo: '[Áudio]: (não foi possível transcrever)' };
+          console.warn('[MEDIA] Áudio sem base64 disponível. Verifique se o Webhook Base64 está ativo na Evolution API.');
+          return { tipo: 'audio', conteudo: '[Áudio]: (não foi possível transcrever - configure o Webhook Base64 na Evolution)' };
         }
         const mimeType = audioMsg.mimetype || 'audio/ogg';
         console.log('[MEDIA] Transcrevendo áudio com Whisper...');
@@ -113,10 +113,10 @@ async function processarMidia(tipoWA, message, fullData) {
 
       case 'imageMessage': {
         const imgMsg = message.imageMessage || {};
-        const base64 = fullData?.media || imgMsg.base64 || '';
+        const base64 = fullData?.media || fullData?.message?.base64 || message?.base64 || imgMsg?.base64 || fullData?.base64 || '';
         if (!base64) {
-          console.warn('[MEDIA] Imagem sem base64 disponível');
-          return { tipo: 'imagem', conteudo: '[Imagem]: (não foi possível processar a imagem)' };
+          console.warn('[MEDIA] Imagem sem base64 disponível. Verifique se o Webhook Base64 está ativo.');
+          return { tipo: 'imagem', conteudo: '[Imagem]: (não foi possível processar a imagem - configure o Webhook Base64)' };
         }
         const mimeType = imgMsg.mimetype || 'image/jpeg';
         console.log('[MEDIA] Descrevendo imagem com GPT-4o...');
@@ -127,11 +127,11 @@ async function processarMidia(tipoWA, message, fullData) {
 
       case 'documentMessage': {
         const docMsg = message.documentMessage || {};
-        const base64 = fullData?.media || docMsg.base64 || '';
+        const base64 = fullData?.media || fullData?.message?.base64 || message?.base64 || docMsg?.base64 || fullData?.base64 || '';
         if (!base64) {
-          console.warn('[MEDIA] Documento sem base64 disponível');
+          console.warn('[MEDIA] Documento sem base64 disponível. Verifique o Webhook Base64.');
           const nomeArquivo = docMsg.fileName || 'arquivo';
-          return { tipo: 'arquivo', conteudo: `[Arquivo]: ${nomeArquivo} (não foi possível processar)` };
+          return { tipo: 'arquivo', conteudo: `[Arquivo]: ${nomeArquivo} (não foi possível processar - sem base64)` };
         }
         const mimeType = docMsg.mimetype || 'application/pdf';
         console.log('[MEDIA] Resumindo documento...');
