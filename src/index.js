@@ -117,13 +117,19 @@ app.post('/webhook', async (req, res) => {
     console.log(`[WEBHOOK] Tipo detectado: ${tipoDetectado}`);
 
     // Registrar webhook recebido no log visual
-    const temBase64 = !!(body.data?.media || body.data?.message?.base64 || body.data?.base64);
+    const temMedia = !!body.data?.media;
+    const temBase64Body = !!body.data?.base64;
+    const temBase64Msg = !!body.data?.message?.base64;
+    const dataKeys = Object.keys(body.data || {}).join(', ');
     logger.registrar(logger.TIPOS.WEBHOOK_RECEBIDO, `Mensagem ${tipos[tipoDetectado] || tipoDetectado} de ${telefone}`, {
       telefone,
       tipo: tipos[tipoDetectado] || tipoDetectado,
       tipoWA: tipoDetectado,
       messageTypes,
-      temBase64,
+      temMedia,
+      temBase64Body,
+      temBase64Msg,
+      dataKeys,
       pushName: mensagemWA.pushName || '',
       messageId: key.id || '',
       textoPreview: mensagemWA.message?.conversation?.substring(0, 100)
