@@ -146,20 +146,32 @@ async function descreverImagem(base64Data, mimeType = 'image/jpeg') {
   return completion.choices[0].message.content.trim();
 }
 
+// Requer pdf-parse no início da função (ou no arquivo)
+const pdfParse = require('pdf-parse');
+
 /**
- * Resume um documento — para PDFs, extrai texto com GPT-4o vision.
+ * Resume um documento — para PDFs, extrai texto com pdf-parse e resume com GPT-4o-mini.
  */
 async function resumirDocumento(base64Data, mimeType = 'application/pdf') {
   if (mimeType.includes('pdf')) {
-    const completion = await openai.chat.completions.create({
-      model: process.env.AI_MODEL || 'gpt-4o-mini',
-      messages: [
-        { role: 'system', content: 'O usuário enviou um documento PDF. Não foi possível processá-lo diretamente. Peça para o usuário descrever o conteúdo ou enviar como imagem/foto.' },
-        { role: 'user', content: 'O cliente enviou um documento PDF.' }
-      ],
-      max_tokens: 200
-    });
-    return completion.choices[0].message.content.trim();
+    try {
+      const buffer = Buffer.from(base64Data, 'base64');
+      const data = await pdfParse(buffer);
+      const textExtraido = data.text;
+      
+      const completion = await openai.chat.completions.create({
+        model: process.env.AI_MODEL || 'gpt-4o-mini',
+        messages: [
+          { role: 'system', content: 'Você é um assistente veterinário. Extraia e resuma o conteúdo a seguir retirado de um PDF lido. Se for um documento veterinário (prontuário, exame, receita), destaque as informações cruciais. Mantenha sucinto.' },
+          { role: 'user', content: textExtraido.substring(0, 15000) } // limitação de tamanho razoável
+        ],
+        max_tokens: 500
+      });
+      return completion.choices[0].message.content.trim();
+    } catch (e) {
+      console.error('[MEDIA] Erro ao extrair PDF:', e.message);
+      return '[Erro ao ler arquivo PDF: Ele pode estar criptografado ou corrompido]';
+    }
   }
 
   // Imagem de documento
