@@ -2,3 +2,8 @@ node_modules/
 .env
 .DS_Store
 *.log
+test*.js
+ngrok_url.json
+url.txt
+reports/
+!reports/.gitkeep
