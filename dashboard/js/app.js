@@ -63,7 +63,7 @@ const catIcons = { servicos: '🏥', precos: '💰', vacinas: '💉', cirurgias:
 // ─── Router ────────────────────────────────────────────────────────────────────
 // Pages map uses string names → resolved at call time via window[] to avoid
 // referencing functions in scripts that haven't loaded yet.
-const pageNames = ['dashboard', 'treinamento', 'conversas', 'clientes', 'integracoes', 'relatorios', 'configuracoes'];
+const pageNames = ['dashboard', 'treinamento', 'conversas', 'clientes', 'integracoes', 'relatorios', 'configuracoes', 'logs'];
 
 let currentPage = 'dashboard';
 
@@ -77,7 +77,7 @@ function navigate(page) {
   currentPage = page;
   window.location.hash = page;
   document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.page === page));
-  const titles = { dashboard: 'Dashboard', treinamento: 'Treinamento do Agente', conversas: 'Conversas', clientes: 'Clientes', integracoes: 'Integrações', relatorios: 'Relatórios', configuracoes: 'Configurações' };
+  const titles = { dashboard: 'Dashboard', treinamento: 'Treinamento do Agente', conversas: 'Conversas', clientes: 'Clientes', integracoes: 'Integrações', relatorios: 'Relatórios', configuracoes: 'Configurações', logs: 'Logs ao Vivo' };
   document.getElementById('page-title').textContent = titles[page] || 'Dashboard';
   document.getElementById('header-actions').innerHTML = '';
   getRenderer(page)();

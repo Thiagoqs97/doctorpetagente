@@ -1306,6 +1306,138 @@ a:hover { opacity: 0.85; }
   flex-shrink: 0;
 }
 
+/* ─── Logs ao Vivo ─────────────────────────── */
+.logs-list {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.log-entry {
+  padding: 12px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+}
+
+.log-entry:hover {
+  background: var(--bg-glass);
+}
+
+.log-entry:first-child {
+  animation: logSlideIn 0.3s ease-out;
+}
+
+@keyframes logSlideIn {
+  from { opacity: 0; transform: translateY(-8px); background: rgba(0, 212, 170, 0.08); }
+  to { opacity: 1; transform: translateY(0); background: transparent; }
+}
+
+.log-entry-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.log-time {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  font-family: 'Courier New', monospace;
+  min-width: 110px;
+  flex-shrink: 0;
+}
+
+.log-nivel {
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.log-tipo-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: var(--radius-full);
+  background: var(--bg-glass);
+  border: 1px solid var(--border-glass);
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.log-resumo {
+  font-size: 0.84rem;
+  color: var(--text-primary);
+  flex: 1;
+  min-width: 150px;
+}
+
+.log-details {
+  display: none;
+  margin-top: 10px;
+  padding: 12px 16px;
+  background: rgba(0,0,0,0.2);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255,255,255,0.04);
+}
+
+.log-entry.expanded .log-details {
+  display: block;
+  animation: detailsIn 0.2s ease-out;
+}
+
+@keyframes detailsIn {
+  from { opacity: 0; max-height: 0; }
+  to { opacity: 1; max-height: 500px; }
+}
+
+.log-detail-item {
+  display: block;
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  padding: 3px 0;
+  font-family: 'Courier New', monospace;
+  word-break: break-all;
+}
+
+.log-detail-item strong {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Log severity colors */
+.log-entry.log-error {
+  border-left: 3px solid var(--danger);
+  background: rgba(239, 68, 68, 0.04);
+}
+
+.log-entry.log-error:hover {
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.log-entry.log-warn {
+  border-left: 3px solid var(--warning);
+  background: rgba(245, 158, 11, 0.03);
+}
+
+.log-entry.log-warn:hover {
+  background: rgba(245, 158, 11, 0.06);
+}
+
+.log-entry.log-success {
+  border-left: 3px solid var(--success);
+}
+
+/* Green stat card */
+.stat-card.green::before { background: linear-gradient(90deg, var(--success), var(--accent)); }
+.stat-card.green .stat-card-icon { background: rgba(16, 185, 129, 0.12); }
+.stat-card.green .stat-card-value { color: var(--success); }
+
+/* Red stat card */
+.stat-card.red::before { background: linear-gradient(90deg, var(--danger), var(--accent-orange)); }
+.stat-card.red .stat-card-icon { background: rgba(239, 68, 68, 0.12); }
+.stat-card.red .stat-card-value { color: var(--danger); }
+
 /* ─── Responsive ───────────────────────────── */
 @media (max-width: 1024px) {
   .sidebar { width: 70px; overflow: hidden; }
@@ -1329,4 +1461,6 @@ a:hover { opacity: 0.85; }
   .chat-layout { grid-template-columns: 1fr; }
   .main-content { padding: 16px; }
   .knowledge-grid { grid-template-columns: 1fr; }
+  .log-entry-main { gap: 6px; }
+  .log-time { min-width: 80px; font-size: 0.68rem; }
 }

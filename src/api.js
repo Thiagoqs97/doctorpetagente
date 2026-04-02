@@ -456,4 +456,42 @@ router.post('/config/ai-model', (req, res) => {
   res.json({ ok: true, modelo });
 });
 
+// ─── LOGS AO VIVO ─────────────────────────────────────────────────────────────
+
+router.get('/logs', (req, res) => {
+  try {
+    const logger = require('./logger');
+    const { tipo, nivel, telefone, limite } = req.query;
+    const logs = logger.obterLogs({
+      tipo: tipo || undefined,
+      nivel: nivel || undefined,
+      telefone: telefone || undefined,
+      limite: parseInt(limite) || 100,
+    });
+    const stats = logger.estatisticas();
+    res.json({ logs, stats });
+  } catch (err) {
+    res.status(500).json({ erro: err.message });
+  }
+});
+
+router.get('/logs/stats', (req, res) => {
+  try {
+    const logger = require('./logger');
+    res.json(logger.estatisticas());
+  } catch (err) {
+    res.status(500).json({ erro: err.message });
+  }
+});
+
+router.delete('/logs', (req, res) => {
+  try {
+    const logger = require('./logger');
+    logger.limparLogs();
+    res.json({ ok: true, mensagem: 'Logs limpos' });
+  } catch (err) {
+    res.status(500).json({ erro: err.message });
+  }
+});
+
 module.exports = router;

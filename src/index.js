@@ -7,6 +7,7 @@ const { processarMidia } = require('./media');
 const accumulator = require('./accumulator');
 const { gerarEEnviarRelatorio } = require('./reports');
 const apiRoutes = require('./api');
+const logger = require('./logger');
 
 const app = express();
 app.use(express.json({ limit: '50mb' }));
@@ -68,13 +69,14 @@ app.post('/webhook', async (req, res) => {
     const eventoNormalizado = evento.toUpperCase().replace(/\./g, '_');
     if (eventoNormalizado !== 'MESSAGES_UPSERT') {
       console.log(`[WEBHOOK] Evento ignorado: ${evento}`);
+      logger.registrar(logger.TIPOS.WEBHOOK_RECEBIDO, `Evento ignorado: ${evento}`, { evento, bodyKeys: Object.keys(body) }, 'info');
       return;
     }
 
     const mensagemWA = body.data;
     if (!mensagemWA) {
       console.log('[WEBHOOK] ⚠️ body.data está vazio!');
-      console.log('[WEBHOOK] Body keys:', Object.keys(body));
+      logger.registrar(logger.TIPOS.ERRO, 'Webhook recebido mas body.data está vazio', { bodyKeys: Object.keys(body) }, 'warn');
       return;
     }
 
@@ -114,8 +116,24 @@ app.post('/webhook', async (req, res) => {
     const tipoDetectado = messageTypes.find(t => tipos[t]) || 'desconhecido';
     console.log(`[WEBHOOK] Tipo detectado: ${tipoDetectado}`);
 
+    // Registrar webhook recebido no log visual
+    const temBase64 = !!(body.data?.media || body.data?.message?.base64 || body.data?.base64);
+    logger.registrar(logger.TIPOS.WEBHOOK_RECEBIDO, `Mensagem ${tipos[tipoDetectado] || tipoDetectado} de ${telefone}`, {
+      telefone,
+      tipo: tipos[tipoDetectado] || tipoDetectado,
+      tipoWA: tipoDetectado,
+      messageTypes,
+      temBase64,
+      pushName: mensagemWA.pushName || '',
+      messageId: key.id || '',
+      textoPreview: mensagemWA.message?.conversation?.substring(0, 100)
+        || mensagemWA.message?.extendedTextMessage?.text?.substring(0, 100)
+        || '',
+    }, 'info');
+
     if (!tipos[tipoDetectado]) {
       console.log(`[WEBHOOK] ⚠️ Tipo não suportado: ${tipoDetectado}`);
+      logger.registrar(logger.TIPOS.ERRO, `Tipo de mensagem não suportado: ${tipoDetectado}`, { telefone, messageTypes }, 'warn');
       return;
     }
 
@@ -126,16 +144,31 @@ app.post('/webhook', async (req, res) => {
         const resultado = await processarMidia(tipoDetectado, mensagemWA.message, mensagemWA);
         if (resultado) {
           console.log(`[WEBHOOK] Conteúdo: "${resultado.conteudo.substring(0, 80)}..."`);
+          logger.registrar(logger.TIPOS.MIDIA_PROCESSADA, `${resultado.tipo} processado de ${telefone}`, {
+            telefone,
+            tipo: resultado.tipo,
+            conteudoPreview: resultado.conteudo.substring(0, 200),
+            tamanhoConteudo: resultado.conteudo.length,
+          }, 'success');
           await accumulator.adicionar(telefone, resultado);
         }
       } catch (err) {
         console.error(`[WEBHOOK] ❌ Erro ao processar mensagem de ${telefone}:`, err.message);
+        logger.registrar(logger.TIPOS.ERRO, `Erro ao processar mensagem de ${telefone}`, {
+          telefone,
+          erro: err.message,
+          stack: err.stack?.split('\n').slice(0, 3).join(' | '),
+        }, 'error');
       }
     });
 
   } catch (err) {
     console.error('[WEBHOOK] ❌ Erro no handler:', err.message);
     console.error(err.stack);
+    logger.registrar(logger.TIPOS.ERRO, `Erro fatal no webhook: ${err.message}`, {
+      erro: err.message,
+      stack: err.stack?.split('\n').slice(0, 5).join(' | '),
+    }, 'error');
   }
 });
 
@@ -154,6 +187,13 @@ app.listen(PORT, () => {
   console.log(`   Health:    http://localhost:${PORT}/health`);
   console.log(`   Webhook:   POST http://localhost:${PORT}/webhook`);
   console.log(`   API:       http://localhost:${PORT}/api\n`);
+
+  logger.registrar(logger.TIPOS.SISTEMA, `Servidor iniciado na porta ${PORT}`, {
+    porta: PORT,
+    n8nConfigurado: !!process.env.N8N_WEBHOOK_URL,
+    modelo: process.env.AI_MODEL || 'gpt-4o-mini',
+    clinica: process.env.CLINIC_NAME || '',
+  }, 'success');
 
   require('./scheduler');
 });
