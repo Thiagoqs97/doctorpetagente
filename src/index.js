@@ -187,7 +187,7 @@ app.post('*', (req, res) => {
 
 // ─── Iniciar servidor ──────────────────────────────────────────────────────────
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`\n🐾 vet-agent rodando na porta ${PORT}`);
   console.log(`   Dashboard: http://localhost:${PORT}/dashboard`);
   console.log(`   Health:    http://localhost:${PORT}/health`);
