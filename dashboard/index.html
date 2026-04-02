@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>vet-agent | Painel de Controle</title>
+  <meta name="description" content="Painel de gestão do agente WhatsApp veterinário">
+  <link rel="stylesheet" href="/dashboard/css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>">
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-icon">🐾</div>
+        <div class="sidebar-brand-text">
+          <h1>vet-agent</h1>
+          <span>Painel de Controle</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Principal</div>
+          <div class="nav-item active" data-page="dashboard" id="nav-dashboard">
+            <span class="nav-icon">📊</span>
+            <span>Dashboard</span>
+          </div>
+          <div class="nav-item" data-page="treinamento" id="nav-treinamento">
+            <span class="nav-icon">🧠</span>
+            <span>Treinamento</span>
+          </div>
+          <div class="nav-item" data-page="conversas" id="nav-conversas">
+            <span class="nav-icon">💬</span>
+            <span>Conversas</span>
+          </div>
+          <div class="nav-item" data-page="clientes" id="nav-clientes">
+            <span class="nav-icon">👤</span>
+            <span>Clientes</span>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Sistema</div>
+          <div class="nav-item" data-page="integracoes" id="nav-integracoes">
+            <span class="nav-icon">🔗</span>
+            <span>Integrações</span>
+          </div>
+          <div class="nav-item" data-page="relatorios" id="nav-relatorios">
+            <span class="nav-icon">📄</span>
+            <span>Relatórios</span>
+          </div>
+          <div class="nav-item" data-page="configuracoes" id="nav-configuracoes">
+            <span class="nav-icon">⚙️</span>
+            <span>Configurações</span>
+          </div>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-status">
+          <div class="status-dot" id="global-status-dot"></div>
+          <span id="global-status-text">Conectando...</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+      <header class="main-header">
+        <h2 id="page-title">Dashboard</h2>
+        <div class="header-actions" id="header-actions"></div>
+      </header>
+
+      <div class="main-content" id="content">
+        <div class="loading"><div class="spinner"></div> Carregando...</div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal Container -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal" id="modal-container"></div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="/dashboard/js/app.js"></script>
+  <script src="/dashboard/js/pages-conversas-clientes.js"></script>
+  <script src="/dashboard/js/pages-sistema.js"></script>
+</body>
+</html>

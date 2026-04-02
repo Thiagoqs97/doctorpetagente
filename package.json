@@ -1,0 +1,37 @@
+{
+  "name": "vet-agent",
+  "version": "1.0.0",
+  "description": "Agente WhatsApp com IA para clínica veterinária",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "seed": "node knowledge/seed.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "@supabase/supabase-js": "^2.49.4",
+    "axios": "^1.8.4",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "form-data": "^4.0.2",
+    "node-cron": "^3.0.3",
+    "openai": "^6.33.0",
+    "pdfkit": "^0.15.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "whatsapp",
+    "veterinario",
+    "gemini",
+    "ai",
+    "agent"
+  ],
+  "author": "",
+  "license": "MIT"
+}
