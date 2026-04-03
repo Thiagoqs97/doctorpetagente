@@ -220,11 +220,15 @@ router.patch('/conhecimento/:id/toggle', async (req, res) => {
 
 router.get('/conversas', async (req, res) => {
   try {
-    const { status, limite } = req.query;
+    const { status, limite, pagina } = req.query;
+    const l = parseInt(limite) || 50;
+    const from = ((parseInt(pagina) || 1) - 1) * l;
+    const to = from + l - 1;
+
     let query = supabase.from('conversas')
       .select('*, clientes(nome, nome_pet)')
       .order('iniciado_em', { ascending: false })
-      .limit(parseInt(limite) || 50);
+      .range(from, to);
 
     if (status) query = query.eq('status', status);
 
@@ -273,8 +277,12 @@ router.put('/conversas/:id/encerrar', async (req, res) => {
 
 router.get('/clientes', async (req, res) => {
   try {
-    const { q } = req.query;
-    let query = supabase.from('clientes').select('*').order('criado_em', { ascending: false });
+    const { q, limite, pagina } = req.query;
+    const l = parseInt(limite) || 50;
+    const from = ((parseInt(pagina) || 1) - 1) * l;
+    const to = from + l - 1;
+
+    let query = supabase.from('clientes').select('*').order('criado_em', { ascending: false }).range(from, to);
 
     if (q) {
       query = query.or(`nome.ilike.%${q}%,telefone.ilike.%${q}%,nome_pet.ilike.%${q}%`);
@@ -337,7 +345,7 @@ router.delete('/clientes/:id', async (req, res) => {
 // ─── INTEGRAÇÕES ──────────────────────────────────────────────────────────────
 
 router.get('/integracoes/status', async (req, res) => {
-  const results = { gemini: false, supabase: false, evolution: false };
+  const results = { ia: false, supabase: false, evolution: false };
   const detalhes = {};
 
   // Supabase
@@ -347,20 +355,32 @@ router.get('/integracoes/status', async (req, res) => {
     detalhes.supabase = error ? error.message : `Conectado (${count} clientes)`;
   } catch (e) { detalhes.supabase = e.message; }
 
-  // OpenAI
+  // IA (OpenAI / Gemini)
   try {
-    const OpenAI = require('openai');
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-    const modelo = process.env.AI_MODEL || 'gpt-4o-mini';
-    const completion = await openai.chat.completions.create({
-      model: modelo,
-      messages: [{ role: 'user', content: 'Responda apenas: ok' }],
-      max_tokens: 10
-    });
-    const text = completion.choices[0].message.content;
-    results.gemini = text.length > 0;
-    detalhes.gemini = results.gemini ? `Conectado — modelo: ${modelo}` : 'Sem resposta';
-  } catch (e) { detalhes.gemini = e.message; }
+    if (process.env.API_MODEL?.includes('gemini') || !process.env.OPENAI_API_KEY) {
+      if (process.env.GEMINI_API_KEY) {
+         const { GoogleGenerativeAI } = require('@google/generative-ai');
+         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+         await genAI.getGenerativeModel({ model: 'gemini-1.5-flash' }).generateContent('ok');
+         results.ia = true;
+         detalhes.ia = 'Conectado nativamente ao Gemini';
+      } else {
+         throw new Error('Chaves de IA não configuradas');
+      }
+    } else {
+      const OpenAI = require('openai');
+      const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+      const modelo = process.env.AI_MODEL || 'gpt-4o-mini';
+      const completion = await openai.chat.completions.create({
+        model: modelo,
+        messages: [{ role: 'user', content: 'Responda apenas: ok' }],
+        max_tokens: 10
+      });
+      const text = completion.choices[0].message.content;
+      results.ia = text.length > 0;
+      detalhes.ia = results.ia ? `Conectado OpenAI — modelo: ${modelo}` : 'Sem resposta';
+    }
+  } catch (e) { detalhes.ia = e.message; }
 
   // Evolution API
   try {
@@ -412,9 +432,14 @@ router.post('/integracoes/testar-evolution', async (req, res) => {
 
 router.get('/relatorios', async (req, res) => {
   try {
+    const { limite, pagina } = req.query;
+    const l = parseInt(limite) || 20;
+    const from = ((parseInt(pagina) || 1) - 1) * l;
+    const to = from + l - 1;
+
     const { data, error } = await supabase
       .from('relatorios').select('*')
-      .order('gerado_em', { ascending: false }).limit(20);
+      .order('gerado_em', { ascending: false }).range(from, to);
     if (error) throw error;
     res.json(data || []);
   } catch (err) {

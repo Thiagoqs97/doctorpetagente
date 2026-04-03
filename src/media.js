@@ -282,9 +282,30 @@ async function processarMidia(tipoWA, message, fullData) {
         return { tipo: 'arquivo', conteudo: `[Arquivo]: ${resumo}` };
       }
 
-      case 'videoMessage':
-        return { tipo: 'text', conteudo: '[Vídeo recebido — a Luna ainda não consegue processar vídeos, mas pode me descrever o que acontece nele?]' };
+      case 'videoMessage': {
+        const vidMsg = message.videoMessage || {};
+        const messageKey = fullData?.key || {};
 
+        const base64 = await extrairBase64(fullData, vidMsg, messageKey);
+
+        if (!base64) {
+          console.warn('[MEDIA] ❌ Vídeo: impossível obter base64');
+          return { tipo: 'video', conteudo: '[Vídeo recebido mas não pôde ser carregado (Erro de extração/tamanho). Pode me descrever o que aconteceu nele?]' };
+        }
+
+        const mimeType = vidMsg.mimetype || 'video/mp4';
+        console.log(`[MEDIA] 🎥 Vídeo recebido (${mimeType}). Repassando para extração via Gemini API...`);
+        logger.registrar(logger.TIPOS.MIDIA_PROCESSADA, 'Iniciando pipeline de video no Gemini...', {}, 'info');
+        
+        try {
+          const geminiVideo = require('./geminiVideo');
+          const analise = await geminiVideo.analisarVideo(base64, mimeType);
+          return { tipo: 'video', conteudo: `[Vídeo Resumo]: ${analise}` };
+        } catch (e) {
+          console.error('[MEDIA] Falha ao repassar análise para geminiVideo. Retornando mensagem default.', e.message);
+          return { tipo: 'video', conteudo: `[Vídeo recebido — Erro na nuvem ao tentar analisar o vídeo: ${e.message}]` };
+        }
+      }
       case 'stickerMessage':
         return { tipo: 'text', conteudo: '[Sticker recebido 😄]' };
 

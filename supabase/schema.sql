@@ -94,11 +94,14 @@ create index if not exists idx_conhecimento_ativo on conhecimento(ativo);
 create index if not exists idx_conhecimento_categoria on conhecimento(categoria);
 
 -- ------------------------------------------------
--- Row Level Security (RLS) — desabilitado para service_key
--- Habilite conforme sua política de segurança
+-- Row Level Security (RLS) habilitado por padrão em todas as tabelas!
 -- ------------------------------------------------
--- alter table clientes enable row level security;
--- alter table conversas enable row level security;
--- alter table mensagens enable row level security;
--- alter table conhecimento enable row level security;
--- alter table relatorios enable row level security;
+alter table clientes enable row level security;
+alter table conversas enable row level security;
+alter table mensagens enable row level security;
+alter table conhecimento enable row level security;
+alter table relatorios enable row level security;
+
+-- PS: A API Node ('vet-agent') usa a SERVICE_KEY (.env), a qual BYPASSA o RLS nativamente,
+-- Ou seja, o agente continuará funcionando 100%. Essa camada te protege contra acessos diretos.
+-- Caso no futuro você faça requisições diretas do front-end com a chave anon, inclua as devidas `CREATE POLICY`!
