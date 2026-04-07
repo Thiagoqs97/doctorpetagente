@@ -266,6 +266,27 @@ async function salvarRelatorio(dataReferencia, arquivoPath, dadosJson) {
   if (error) throw new Error(`[DB] salvarRelatorio: ${error.message}`);
 }
 
+// ─── STATUS DA CONVERSA ───────────────────────────────────────────────────────
+
+/**
+ * Busca a conversa ativa ou aguardando humano para o telefone (dentro da janela de 2h).
+ * @param {string} telefone
+ * @returns {Promise<{id: string, status: string}|null>}
+ */
+async function buscarConversaAtiva(telefone) {
+  const limite = new Date(Date.now() - SESSAO_EXPIRACAO_MS).toISOString();
+  const { data } = await supabase
+    .from('conversas')
+    .select('id, status, ultima_mensagem_em')
+    .eq('telefone', telefone)
+    .in('status', ['ativa', 'aguardando_humano'])
+    .gt('ultima_mensagem_em', limite)
+    .order('iniciado_em', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  return data || null;
+}
+
 // ─── CONHECIMENTO ─────────────────────────────────────────────────────────────
 
 /**
@@ -307,5 +328,6 @@ module.exports = {
   buscarHistorico,
   coletarDadosRelatorio,
   salvarRelatorio,
-  buscarConhecimento
+  buscarConhecimento,
+  buscarConversaAtiva
 };

@@ -2,7 +2,7 @@
 
 /**
  * Script de seed — popula a tabela `conhecimento` no Supabase
- * com dados fictícios mas realistas de uma clínica veterinária.
+ * com os dados reais do Hospital Doctor Vet.
  *
  * Execute: node knowledge/seed.js
  * (Configure o .env antes de rodar)
@@ -16,168 +16,83 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_KEY
 );
 
-const clinicaNome = process.env.CLINIC_NAME || 'Clínica Veterinária Pet Saúde';
-const clinicaTelefone = process.env.CLINIC_PHONE || '(11) 99999-0000';
-const clinicaHorarios = process.env.CLINIC_HOURS || 'Segunda a Sexta: 8h às 19h | Sábado: 8h às 13h';
-const clinicaEndereco = process.env.CLINIC_ADDRESS || 'Rua dos Animais, 123 - Centro';
+const clinicaNome = process.env.CLINIC_NAME || 'Doctor Vet';
+const clinicaTelefone = process.env.CLINIC_PHONE || '558688454343';
+const clinicaEndereco = process.env.CLINIC_ADDRESS || 'Av. Dom Severino, 3060 - São Cristóvão, Teresina - PI, 64051-160';
 
 const conhecimentos = [
-  // ─── SERVIÇOS ────────────────────────────────────────────────────────────────
+  // ─── IDENTIFICAÇÃO ────────────────────────────────────────────────────────────
   {
-    categoria: 'servicos',
-    titulo: 'Consultas Veterinárias',
-    conteudo: `A ${clinicaNome} oferece consultas clínicas gerais para cães e gatos. Realizamos avaliação completa do animal, incluindo exame físico, anamnese detalhada e orientação ao tutor. Também atendemos coelhos, aves e pequenos mamíferos mediante agendamento prévio.`,
-    keywords: 'consulta,veterinario,clinica,avaliacao,exame,atendimento,gato,cachorro,cao,animal'
-  },
-  {
-    categoria: 'servicos',
-    titulo: 'Exames Laboratoriais e de Imagem',
-    conteudo: `Dispomos de laboratório próprio para hemograma completo, bioquímicos, urinálise, parasitológico e cultura bacteriana. Para imagens oferecemos: raio-X digital, ultrassonografia abdominal e ecocardiograma. Resultados em até 24h para exames laboratoriais de rotina.`,
-    keywords: 'exame,laboratorio,hemograma,bioquimico,raio-x,ultrassom,ultrassonografia,ecocardiograma,resultado,imagem'
-  },
-  {
-    categoria: 'servicos',
-    titulo: 'Internação e UTI Veterinária',
-    conteudo: `Possuímos internação 24 horas com monitoramento contínuo. Nossa UTI veterinária conta com oxigenoterapia, fluidoterapia intravenosa e monitoração de sinais vitais. Os tutores podem ligar a qualquer momento para obter informações sobre o pet internado.`,
-    keywords: 'internacao,internamento,uti,24horas,plantao,emergencia,grave,soro,oxigenio,monitoramento'
-  },
-  {
-    categoria: 'servicos',
-    titulo: 'Banho, Tosa e Estética Animal',
-    conteudo: `Oferecemos banho e tosa artística para cães e gatos. Serviços incluem: banho simples, banho com hidratação, tosa higiênica, tosa na tesoura, corte de unhas, limpeza de ouvido e escovação de dentes. O grooming é realizado por profissionais certificados.`,
-    keywords: 'banho,tosa,estetica,higiene,unha,ouvido,escovacao,grooming,pelagem,corte'
-  },
-  {
-    categoria: 'servicos',
-    titulo: 'Pet Shop Integrado',
-    conteudo: `Nossa clínica conta com pet shop completo. Vendemos rações premium e super premium para cães e gatos (todas as fases da vida), petiscos, brinquedos, coleiras, guias, camas, antipulgas, vermífugos e acessórios diversos.`,
-    keywords: 'petshop,racao,brinquedo,coleira,antipulga,vermifugo,acessorio,compra,produto'
-  },
-  {
-    categoria: 'servicos',
-    titulo: 'Hotel para Pets (Pet Hotel)',
-    conteudo: `Oferecemos hospedagem para cães e gatos durante viagens ou ausências. O pet hotel inclui: ambiente climatizado, alimentação conforme rotina do pet, passeios diários para cães, monitoramento 24h e envio de fotos pelo WhatsApp a pedido. Reserva com antecedência mínima de 48h.`,
-    keywords: 'hotel,hospedagem,viagem,hospedar,ficar,pet hotel,hospedar pet,passeio'
+    categoria: 'horarios',
+    titulo: 'Funcionamento e Localização',
+    conteudo: `${clinicaNome}\n📍 ${clinicaEndereco}\n📞 ${clinicaTelefone}\n\nFuncionamento: 24 horas por dia, 7 dias por semana, incluindo domingos e feriados.\n\nEspécies atendidas: SOMENTE cães e gatos (caninos e felinos).`,
+    keywords: 'horario,funcionamento,aberto,fechado,domingo,feriado,plantao,24horas,endereco,localizacao,onde,canino,felino,cao,gato'
   },
 
   // ─── PREÇOS ──────────────────────────────────────────────────────────────────
   {
     categoria: 'precos',
-    titulo: 'Tabela de Preços — Consultas',
-    conteudo: `Consulta clínica geral: R$ 120,00\nConsulta de retorno (até 15 dias): R$ 70,00\nConsulta de urgência (sem agendamento): R$ 150,00\nConsulta de emergência (plantão): R$ 200,00\nConsulta para exame pré-cirúrgico: R$ 100,00\nOBS: Valores aproximados, podem variar. Confirmar na recepção.`,
-    keywords: 'preco,valor,quanto,custo,consulta,retorno,urgencia,taxa,cobrar'
+    titulo: 'Tabela de Preços — Consulta Clínico Geral',
+    conteudo: `Consulta com Clínico Geral — por ordem de chegada (sem agendamento):\n\nSegunda a Sexta:\n  • 08:00 às 21:30 → R$ 180,00\n  • 21:30 às 08:00 (madrugada) → R$ 250,00\n\nSábados:\n  • 08:00 às 19:00 → R$ 180,00\n  • 19:30 às 08:00 (noite/madrugada) → R$ 250,00\n\nDomingos e Feriados:\n  • 08:00 às 19:30 → R$ 190,00\n  • 19:30 às 08:00 (noite/madrugada) → R$ 250,00\n\n⚠️ Consulta com clínico geral é por ORDEM DE CHEGADA.`,
+    keywords: 'preco,valor,quanto,custo,consulta,clinico,geral,taxa,cobrar,segunda,sabado,domingo,feriado,madrugada,plantao'
   },
   {
     categoria: 'precos',
-    titulo: 'Tabela de Preços — Banho e Tosa',
-    conteudo: `Banho pequeno porte: R$ 60,00 | Médio porte: R$ 90,00 | Grande porte: R$ 130,00\nBanho + tosa higiênica: acrescente R$ 20,00\nTosa artística (tesoura): R$ 80,00 a R$ 150,00 conforme porte\nGatos (banho): R$ 90,00 a R$ 140,00\nCorte de unhas: R$ 25,00\nEscovação de dentes: R$ 35,00\nOBS: Valores orientativos, peso e pelagem influenciam no preço final.`,
-    keywords: 'preco,valor,banho,tosa,gato,cachorro,quanto,porte,pelo,higiene'
+    titulo: 'Consulta com Especialista',
+    conteudo: `Consulta com Médico Especialista: R$ 250,00 (à vista)\nParcelado em 2x: R$ 260,00 (acréscimo de R$ 10,00)\n\n⚠️ Consultas com especialistas são realizadas SOMENTE por agendamento.\nPara agendar, fale com nossa equipe.`,
+    keywords: 'especialista,medico,especializado,agendamento,preco,valor,quanto,custo,especialidade'
   },
   {
     categoria: 'precos',
-    titulo: 'Tabela de Preços — Exames',
-    conteudo: `Hemograma completo: R$ 75,00\nBioquímico (cada): R$ 35,00\nPerfil renal (creatinina + ureia + fosforo): R$ 95,00\nPerfil hepático (ALT + FA + GGT): R$ 90,00\nUrinálise: R$ 55,00\nRaio-X (por incidência): R$ 110,00\nUltrassonografia abdominal: R$ 180,00\nEcocardiograma: R$ 250,00\nOBS: Pacotes de exames têm desconto. Solicite.`,
-    keywords: 'preco,valor,exame,laboratorio,hemograma,raio-x,ultrassom,quanto,custo'
-  },
-  {
-    categoria: 'precos',
-    titulo: 'Formas de Pagamento',
-    conteudo: `Aceitamos: dinheiro, Pix (chave: ${clinicaTelefone}), cartão de débito e crédito (todas as bandeiras). Parcelamos consultas e procedimentos a partir de R$ 200 em até 3x sem juros e 6x com juros. Não trabalhamos com cheque.`,
-    keywords: 'pagamento,pix,cartao,credito,debito,parcelar,parcela,dinheiro,forma pagamento'
+    titulo: 'Formas de Pagamento e Parcelamento',
+    conteudo: `Parcelamento disponível:\n  • A partir de R$ 150,00 → 2x\n  • A partir de R$ 300,00 → 3x\n  • A partir de R$ 400,00 → 4x\n  • A partir de R$ 500,00 → 5x\n  • A partir de R$ 600,00 → 6x\n\nConsulta com especialista: parcela em até 2x (valor total: R$ 260,00)\n\nFormas aceitas: cartão de crédito, cartão de débito, Pix e dinheiro.`,
+    keywords: 'pagamento,parcelamento,parcela,cartao,credito,debito,pix,dinheiro,forma,vezes,juros'
   },
 
-  // ─── VACINAS ─────────────────────────────────────────────────────────────────
+  // ─── VISITAS ─────────────────────────────────────────────────────────────────
   {
-    categoria: 'vacinas',
-    titulo: 'Vacinas para Cães',
-    conteudo: `Protocolo vacinal para cães:\n• V8 ou V10 (polivalente): filhotes a partir de 45 dias, 3 doses com 21 dias de intervalo + 1 reforço anual. R$ 85,00/dose\n• Raiva: anual, obrigatória por lei. R$ 55,00\n• Gripe (Bordetella): anual, especialmente para cães em contato frequente com outros. R$ 75,00\n• Leishmaniose: série de 3 doses + 1 anual. R$ 180,00/dose\nCarteirinha de vacinação emitida gratuitamente.`,
-    keywords: 'vacina,vacinacao,v8,v10,raiva,gripe,bordetella,leishmaniose,filhote,cachorro,cao,dose,protocolo'
-  },
-  {
-    categoria: 'vacinas',
-    titulo: 'Vacinas para Gatos',
-    conteudo: `Protocolo vacinal para gatos:\n• Tríplice felina (herpes + calicivírus + panleucopenia): filhotes a partir de 60 dias, 3 doses + booster anual. R$ 90,00/dose\n• Raiva: anual. R$ 55,00\n• Leucemia felina (FeLV): 2 doses com 30 dias de intervalo + reforço anual (recomendada para gatos semi-domésticos). R$ 120,00/dose\nLembre de trazer a carteirinha em cada consulta.`,
-    keywords: 'vacina,vacinacao,gato,felino,triplice,raiva,leucemia,felv,filhote,herpes,calici,panleuco'
-  },
-
-  // ─── CIRURGIAS ───────────────────────────────────────────────────────────────
-  {
-    categoria: 'cirurgias',
-    titulo: 'Castração de Cães e Gatos',
-    conteudo: `Realizamos castração de machos e fêmeas de todas as raças e tamanhos.\n\nCães machos: orquiectomia a partir de R$ 280,00 (até 10kg) | R$ 350,00 (10-25kg) | R$ 430,00 (>25kg)\nCões fêmeas: ovário-histerectomia a partir de R$ 380,00 (até 10kg) | R$ 480,00 (10-25kg) | R$ 580,00 (>25kg)\n\nGato macho: R$ 200,00 | Gata fêmea: R$ 280,00\n\nTodos os valores incluem: anestesia, procedimento cirúrgico, material e 1 retorno pós-operatório. Exames pré-cirúrgicos à parte.`,
-    keywords: 'castracao,castrar,cirurgia,orquiectomia,histerectomia,esterilizacao,neutro,macho,femea,cao,gato,operacao'
-  },
-  {
-    categoria: 'cirurgias',
-    titulo: 'Outras Cirurgias e Procedimentos Cirúrgicos',
-    conteudo: `Realizamos diversas cirurgias de tecidos moles e ortopédicas. Principais procedimentos: cesárea, piometra, esplenectomia, remoção de tumor, cistotomia (cálculo vesical), osteossíntese (fratura), extração dentária. O orçamento é sempre feito após avaliação clínica e exames pré-operatórios. Contamos com anestesiologista especializado e UTI pós-operatória.`,
-    keywords: 'cirurgia,operacao,tumor,fratura,cesarea,piometra,pioometra,calculo,dente,procedimento,ortopedia'
-  },
-
-  // ─── HORÁRIOS ────────────────────────────────────────────────────────────────
-  {
-    categoria: 'horarios',
-    titulo: 'Horários de Funcionamento',
-    conteudo: `${clinicaNome}\n📍 ${clinicaEndereco}\n📞 ${clinicaTelefone}\n\nHorários:\n${clinicaHorarios}\n\nPlantão de emergências: 24h (consulte taxa de plantão)\nDomingos e feriados: apenas emergências (mediante contato prévio)`,
-    keywords: 'horario,funcionamento,aberto,fechado,domingo,feriado,plantao,segunda,sexta,sabado'
-  },
-
-  // ─── VETERINÁRIOS ────────────────────────────────────────────────────────────
-  {
-    categoria: 'veterinarios',
-    titulo: 'Nossa Equipe de Veterinários',
-    conteudo: `Nossa equipe é formada por veterinários com especializações diversas:\n• Dr. Carlos Mendes — Clínica Geral e Dermatologia (CRMV-SP 12345)\n• Dra. Fernanda Lima — Cardiologia e Clínica Cirúrgica (CRMV-SP 23456)\n• Dr. Ricardo Santos — Ortopedia e Traumatologia (CRMV-SP 34567)\n• Dra. Ana Costa — Oncologia e Clínica de Felinos (CRMV-SP 45678)\nTodos os profissionais são registrados no CRMV-SP.`,
-    keywords: 'veterinario,medico,doutor,especialista,equipe,crmv,cardiologia,dermatologia,cirurgia,oncologia,ortopedia'
+    categoria: 'visitas',
+    titulo: 'Horário de Visita para Animais Internados',
+    conteudo: `Visitas a animais internados são permitidas das 16h às 19h20.\nA visitação é realizada por agendamento.\n\nPara agendar sua visita, entre em contato com nossa equipe pelo WhatsApp ou telefone: ${clinicaTelefone}`,
+    keywords: 'visita,internado,internacao,ver,animai,pet internado,horario visita,agendar visita,ver meu pet'
   },
 
   // ─── EMERGÊNCIAS ─────────────────────────────────────────────────────────────
   {
     categoria: 'emergencia',
     titulo: 'Sinais de Emergência Veterinária',
-    conteudo: `ATENÇÃO: Se o seu pet apresentar qualquer um dos sinais abaixo, procure atendimento IMEDIATAMENTE:\n\n🚨 SITUAÇÕES DE EMERGÊNCIA:\n• Dificuldade respiratória (ofegância, respiração pela boca em gatos)\n• Perda de consciência ou desmaio\n• Convulsões\n• Abdômen muito distendido e dor abdominal intensa\n• Sangramento intenso que não para\n• Ingestão de produto tóxico (veneno, chocolate, medicamento humano, uva, cebola)\n• Atropelamento ou trauma grave\n• Vômitos ou diarreia com sangue\n• Não consegue urinar (especialmente gatos machos — obstrução urinária)\n• Paralisia súbita de membros\n\nNÃO ESPERE — venha diretamente à clínica ou ligue para o plantão: ${clinicaTelefone}`,
-    keywords: 'emergencia,urgente,grave,socorro,engoliu,intoxicacao,veneno,convulsao,desmaio,sangue,respiracao,paralisia,obstrucao'
+    conteudo: `ATENÇÃO: Se o seu pet apresentar qualquer sinal abaixo, venha IMEDIATAMENTE ao ${clinicaNome} — atendemos 24 horas!\n\n🚨 SITUAÇÕES DE EMERGÊNCIA:\n• Dificuldade respiratória (ofegância, respiração pela boca em gatos)\n• Perda de consciência ou desmaio\n• Convulsões\n• Abdômen muito distendido e dor intensa\n• Sangramento intenso\n• Ingestão de produto tóxico (veneno, chocolate, medicamento humano, uva, cebola, xilitol)\n• Atropelamento ou trauma grave\n• Vômitos ou diarreia com sangue\n• Gato macho não consegue urinar (obstrução urinária — emergência grave)\n• Paralisia súbita de membros\n\nNÃO ESPERE — venha direto: ${clinicaEndereco}\nTelefone: ${clinicaTelefone}`,
+    keywords: 'emergencia,urgente,grave,socorro,engoliu,intoxicacao,veneno,convulsao,desmaio,sangue,respiracao,paralisia,obstrucao,nao urina,atropelado'
   },
   {
     categoria: 'emergencia',
     titulo: 'Primeiros Socorros para Pets',
-    conteudo: `ORIENTAÇÕES GERAIS DE PRIMEIROS SOCORROS:\n\n1. ENVENENAMENTO: NÃO induza vômito sem orientação veterinária. Guarde a embalagem do produto e venha imediatamente.\n2. FRATURA: Não force o movimento. Transporte em superfície rígida, evite pressionar a área afetada.\n3. SANGRAMENTO: Comprima com pano limpo. Não use torniquete sem orientação.\n4. CRISE CONVULSIVA: Não segure o animal. Proteja de objetos cortantes. Anote o tempo da crise e venha imediatamente.\n5. OBSTRUÇÃO DE VIAS AÉREAS: Se o pet está com dificuldade grave de respirar, movendo a cabeça para frente tentando respirar, venha urgente.\n\nEm todos os casos: ligue primeiro e venha imediatamente.`,
-    keywords: 'primeiros socorros,envenenamento,fratura,sangramento,convulsao,obstrucao,socorro,ajuda,engoliu,crise'
+    conteudo: `ORIENTAÇÕES GERAIS DE PRIMEIROS SOCORROS — venha imediatamente ao hospital após:\n\n1. ENVENENAMENTO: NÃO induza vômito sem orientação veterinária. Guarde a embalagem e venha imediatamente.\n2. FRATURA: Não force movimento. Transporte em superfície rígida.\n3. SANGRAMENTO: Comprima com pano limpo. Não use torniquete.\n4. CONVULSÃO: Não segure o animal. Proteja de objetos cortantes. Anote o tempo da crise.\n5. DIFICULDADE RESPIRATÓRIA: Venha imediatamente sem aguardar.\n\nO ${clinicaNome} atende emergências 24 horas: ${clinicaEndereco}`,
+    keywords: 'primeiros socorros,envenenamento,fratura,sangramento,convulsao,socorro,ajuda,engoliu,crise,intoxicacao'
+  },
+
+  // ─── EXAMES ───────────────────────────────────────────────────────────────────
+  {
+    categoria: 'exames',
+    titulo: 'Resultado de Exames',
+    conteudo: `Para consultar resultado de exame, nossa equipe precisa localizar o cadastro pelo CPF do tutor.\nInforme seu CPF e um atendente irá te ajudar com os resultados.\n\nContato: ${clinicaTelefone}`,
+    keywords: 'resultado,exame,laboratorio,cpf,buscar,localizar,laudo,retorno exame,exame pronto'
+  },
+
+  // ─── SERVIÇOS ────────────────────────────────────────────────────────────────
+  {
+    categoria: 'servicos',
+    titulo: 'Serviços do Hospital Doctor Vet',
+    conteudo: `O ${clinicaNome} oferece atendimento completo para cães e gatos:\n\n• Consultas clínicas gerais — 24 horas, por ordem de chegada\n• Consultas com especialistas — por agendamento\n• Exames laboratoriais e de imagem\n• Internação e UTI veterinária 24 horas\n• Cirurgias clínicas e ortopédicas\n• Emergências e plantão 24 horas\n\nAtendemos SOMENTE cães e gatos.`,
+    keywords: 'servico,atendimento,clinica,hospital,cirurgia,internacao,exame,plantao,24horas,completo'
   },
 
   // ─── AGENDAMENTO ─────────────────────────────────────────────────────────────
   {
     categoria: 'agendamento',
-    titulo: 'Como Agendar uma Consulta ou Serviço',
-    conteudo: `Para agendar, você pode:\n1. Contato via WhatsApp (aqui mesmo!) — informe nome do tutor, nome e espécie do pet e o serviço desejado\n2. Ligar para ${clinicaTelefone} durante o horário de atendimento\n3. Comparecer presencialmente à recepção\n\nInformações necessárias para agendamento:\n• Nome completo do tutor\n• Telefone para contato\n• Nome, espécie e raça do pet\n• Motivo da consulta\n• Preferência de data e horário\n\nCancelamentos devem ser feitos com pelo menos 2 horas de antecedência.`,
-    keywords: 'agendamento,agendar,marcar,consulta,horario,cancelar,cancelamento,reagendar,data,disponivel'
-  },
-  {
-    categoria: 'agendamento',
-    titulo: 'Política de Cancelamento e Reagendamento',
-    conteudo: `Nossa política de cancelamento:\n• Cancelamentos com mais de 2 horas de antecedência: sem cobrança\n• Cancelamentos com menos de 2 horas: meia taxa de consulta (R$ 60,00)\n• Não comparecimento sem aviso: taxa de ausência de R$ 80,00\n\nNão se preocupe com imprevistos! Entendemos que situações surgem — entre em contato pelo WhatsApp e resolvemos da melhor forma para você e seu pet. 🐾`,
-    keywords: 'cancelamento,cancelar,remarcar,reagendar,taxa,ausencia,falta,politica,desmarcacao'
-  },
-
-  // ─── CONVÊNIOS ───────────────────────────────────────────────────────────────
-  {
-    categoria: 'convenios',
-    titulo: 'Convênios e Planos de Saúde para Pets',
-    conteudo: `Trabalhamos com os seguintes convênios e planos veterinários:\n• PetLove Saúde\n• VetSaúde Premium\n• Qualicorp Pet\n• AMIPET\n\nPara atendimento via convênio:\n1. Informe o plano ao agendar\n2. Traga a carteirinha e documento com foto\n3. Alguns procedimentos podem necessitar autorização prévia do plano\n\nCaso seu plano não esteja na lista, entre em contato — podemos verificar parcerias.`,
-    keywords: 'convenio,plano,saude,seguro,petlove,qualicorp,amipet,vetsaude,carteirinha,cobertura'
-  },
-
-  // ─── FAQ ─────────────────────────────────────────────────────────────────────
-  {
-    categoria: 'faq',
-    titulo: 'Perguntas Frequentes — Dúvidas Gerais',
-    conteudo: `DÚVIDAS MAIS FREQUENTES:\n\nQ: Meu pet precisa estar em jejum para a consulta?\nR: Para consultas de rotina, não é necessário. Mas se há possibilidade de anestesia ou coleta de sangue, sim (4-8h para sangue, 8-12h para anestesia).\n\nQ: Posso levar mais de um pet?\nR: Sim, mas agende uma consulta para cada animal pois cada um precisa de tempo adequado.\n\nQ: O pet precisa estar na transportadora?\nR: Gatos sim — é obrigatório para a segurança deles e dos outros animais. Cães podem vir com coleira e guia, mas transportadoras são bem-vindas.\n\nQ: Aceitam pets de raças exóticas?\nR: Realizamos consultas para coelhos, hamsters, porquinhos-da-índia, chinchilas, aves e répteis mediante agendamento prévio com nossa especialista.`,
-    keywords: 'jejum,transportadora,exotico,coelho,hamster,passaro,reptil,regras,duvida,pergunta'
-  },
-  {
-    categoria: 'faq',
-    titulo: 'Cuidados Pós-Operatórios',
-    conteudo: `Orientações gerais após cirurgias:\n\n• Mantenha o colar elizabetano até a retirada dos pontos\n• Evite banhos e contato com umidade na região operada\n• Medicações devem ser administradas nos horários prescritos\n• Dieta: ofereça alimento leve (frango cozido + arroz) nas primeiras 24h, depois retorne gradualmente à ração\n• Restrinja a atividade física por 10-14 dias\n• Sinais de alarme: inchaço excessivo, sangramento, febre, pet não se alimenta, ponto abrindo ➡ venha imediatamente\n• O retorno pós-operatório é incluído no procedimento — agende após a cirurgia`,
-    keywords: 'pos operatorio,cirurgia,ponto,colar,elizabetano,cuidado,recuperacao,sutura,curativo,medicacao,antibiotico'
+    titulo: 'Agendamento de Consultas e Serviços',
+    conteudo: `Consulta com clínico geral: sem agendamento, por ordem de chegada, 24 horas.\n\nConsulta com especialista: realizada por agendamento — entre em contato com nossa equipe.\n\nVisita a animais internados: por agendamento, das 16h às 19h20.\n\nPara agendar, fale com nossa equipe pelo WhatsApp: ${clinicaTelefone}`,
+    keywords: 'agendar,agendamento,marcar,consulta,horario,disponivel,especialista,visita,data'
   }
 ];
 

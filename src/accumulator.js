@@ -1,7 +1,8 @@
 'use strict';
 
-const { enviarDigitando, enviarMensagem } = require('./evolution');
+const { enviarDigitando, enviarMensagem, enviarParaGrupoRelatorio } = require('./evolution');
 const { processarMensagens } = require('./agent');
+const { buscarConversaAtiva, atualizarConversa } = require('./database');
 
 // ─── Estado interno do acumulador ──────────────────────────────────────────────
 // { telefone: { mensagens: [], timer: Timeout, intervalDigitando: Interval } }
@@ -65,6 +66,24 @@ async function _disparar(telefone) {
 
   console.log(`[ACUMULADOR] Disparando ${mensagens.length} mensagem(ns) de ${telefone}`);
 
+  // ─── Verificar se conversa já está aguardando humano ──────────────────────
+  try {
+    const conversaAtual = await buscarConversaAtiva(telefone);
+    if (conversaAtual?.status === 'aguardando_humano') {
+      console.log(`[ACUMULADOR] Conversa de ${telefone} está aguardando humano — encaminhando ao grupo`);
+      const textoMsgs = mensagens.map(m => m.conteudo).join('\n');
+      await enviarParaGrupoRelatorio(
+        `📨 *Nova mensagem — cliente aguardando atendimento*\n\n📱 *Telefone:* ${telefone}\n💬 *Mensagem:*\n${textoMsgs}`
+      );
+      // Atualizar ultima_mensagem_em para manter a sessão viva
+      await atualizarConversa(conversaAtual.id, { status: 'aguardando_humano' });
+      return;
+    }
+  } catch (err) {
+    console.error(`[ACUMULADOR] Erro ao checar status de conversa de ${telefone}:`, err.message);
+  }
+
+  // ─── Processar normalmente com a IA ───────────────────────────────────────
   try {
     const resposta = await processarMensagens(telefone, mensagens);
     if (resposta) {
